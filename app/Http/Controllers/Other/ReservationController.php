@@ -55,8 +55,8 @@ class ReservationController extends Controller
             'infants' => 'nullable|string',
             'reservation_date' => 'required|date',
             'reservation_time' => 'required',
-            'departure_date' => 'required|date|after:reservation_date',
-            'no_of_day' => 'required|string'
+            'departure_date' => 'required|date|after_or_equal:reservation_date',
+            'no_of_day' => 'required|integer|min:0'
         ]);
 
         $now = now();
@@ -103,8 +103,8 @@ class ReservationController extends Controller
             'infants' => 'nullable|string',
             'reservation_date' => 'required|date',
             'reservation_time' => 'required',
-            'departure_date' => 'required|date|after:reservation_date',
-            'no_of_day' => 'required|string'
+            'departure_date' => 'required|date|after_or_equal:reservation_date',
+            'no_of_day' => 'required|integer|min:0'
         ]);
 
         try {

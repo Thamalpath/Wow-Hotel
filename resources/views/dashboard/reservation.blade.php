@@ -334,15 +334,19 @@
             const reservationDate = document.getElementById('reservation_date').value;
             const noOfDays = parseInt(document.getElementById('no_of_day').value);
 
-            if (!isNaN(noOfDays) && reservationDate) {
+            if (reservationDate) {
                 const date = new Date(reservationDate);
-                date.setDate(date.getDate() + noOfDays);
 
-                const year = date.getFullYear();
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const day = String(date.getDate()).padStart(2, '0');
-
-                document.getElementById('departure_date').value = `${year}-${month}-${day}`;
+                // Handle day-out reservation (when noOfDays is 0)
+                if (noOfDays === 0) {
+                    document.getElementById('departure_date').value = reservationDate;
+                } else if (!isNaN(noOfDays)) {
+                    date.setDate(date.getDate() + noOfDays);
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    document.getElementById('departure_date').value = `${year}-${month}-${day}`;
+                }
             }
         }
 
