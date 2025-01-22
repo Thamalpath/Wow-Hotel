@@ -54,6 +54,43 @@
         noCalendar: true,
         dateFormat: "H:i",
     });
+
+    $(".date-range").flatpickr({
+        mode: "range",
+        altInput: true,
+        altFormat: "F j, Y",
+        dateFormat: "Y-m-d",
+    });
+
+    $("#calendar-inline").flatpickr({
+        inline: true,
+        mode: "range",
+        altInput: false,
+        altFormat: "F j, Y",
+        dateFormat: "Y-m-d",
+        onChange: function(selectedDates, dateStr) {
+            if (selectedDates.length > 0) {
+                let startDate = selectedDates[0];
+                let endDate = selectedDates[1] || selectedDates[0];
+
+                fetch('{{ route('dashboard.check-available-rooms') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({
+                            start_date: startDate.toISOString().split('T')[0],
+                            end_date: endDate.toISOString().split('T')[0]
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        updateAvailableRoomsTable(data.availableRooms, dateStr);
+                    });
+            }
+        }
+    });
 </script>
 
 <script src="{{ asset('assets/plugins/Drag-And-Drop/dist/imageuploadify.min.js') }}"></script>

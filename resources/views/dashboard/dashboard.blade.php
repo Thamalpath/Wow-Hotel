@@ -368,6 +368,49 @@
                                         <div class="card-body">
                                             <div class="row row-cols-md g-5">
                                                 <div class="col-md-6">
+                                                    <div class="mb-3 d-flex justify-content-center align-items-center">
+                                                        <div id="calendar-inline"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <div id="calendar-inline"></div>
+                                                    </div>
+                                                    <h5 class="text-warning fw-bold mb-3" id="selectedDateRange"></h5>
+                                                    <div class="table-responsive">
+                                                        <table class="table table-striped table-bordered"
+                                                            id="availableRoomsTable">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>#</th>
+                                                                    <th>Room</th>
+                                                                    <th>Room Type</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <!-- Will be populated dynamically -->
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xxl-12 d-flex align-items-stretch">
+                    <div class="card w-100 overflow-hidden rounded-4 text-center">
+                        <div class="card-body position-relative p-4">
+                            <div class="row">
+                                <div class="col-12 col-xl-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="row row-cols-md g-5">
+                                                <div class="col-md-6">
                                                     <div class="table-responsive">
                                                         <h6 class="text-start">Today</h6>
                                                         <table id="today" class="table table-striped table-bordered"
@@ -828,6 +871,23 @@
 
 @section('scripts')
     <script>
+        function updateAvailableRoomsTable(rooms, dateRange) {
+            const tableBody = document.querySelector('#availableRoomsTable tbody');
+            const dateDisplay = document.querySelector('#selectedDateRange');
+
+            dateDisplay.textContent = `Selected Date(s): ${dateRange}`;
+
+            tableBody.innerHTML = rooms.length ? rooms.map((room, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${room.room_no}</td>
+                    <td>${room.room_type}</td>
+                </tr>
+            `).join('') : '<tr><td colspan="3">No rooms available for selected dates</td></tr>';
+        }
+    </script>
+
+    <script>
         const HARDCODED_PASSWORD = "{{ config('app.report_password', 'buddy123') }}";
         let pendingAction = null;
 
@@ -953,25 +1013,25 @@
                                         ${data.incomes.map(income => {
                                             totalIncome += parseFloat(income.amount);
                                             return `
-                                                                                                                                <tr>
-                                                                                                                                    <td>${income.bill_no || '-'}</td>
-                                                                                                                                    <td>${income.description || '-'}</td>
-                                                                                                                                    <td>${income.handle_by || '-'}</td>
-                                                                                                                                    <td class="text-end">${parseFloat(income.amount).toFixed(2)}</td>
-                                                                                                                                    <td></td>
-                                                                                                                                </tr>`;
+                                                                                                                                                                                        <tr>
+                                                                                                                                                                                            <td>${income.bill_no || '-'}</td>
+                                                                                                                                                                                            <td>${income.description || '-'}</td>
+                                                                                                                                                                                            <td>${income.handle_by || '-'}</td>
+                                                                                                                                                                                            <td class="text-end">${parseFloat(income.amount).toFixed(2)}</td>
+                                                                                                                                                                                            <td></td>
+                                                                                                                                                                                        </tr>`;
                                         }).join('')}
                                         
                                         ${data.expenses.map(expense => {
                                             totalExpense += parseFloat(expense.amount);
                                             return `
-                                                                                                                                <tr>
-                                                                                                                                    <td>${expense.bill_no || '-'}</td>
-                                                                                                                                    <td>${expense.description} - ${expense.ex_cat}</td>
-                                                                                                                                    <td>${expense.handle_by || '-'}</td>
-                                                                                                                                    <td></td>
-                                                                                                                                    <td class="text-end">${parseFloat(expense.amount).toFixed(2)}</td>
-                                                                                                                                </tr>`;
+                                                                                                                                                                                        <tr>
+                                                                                                                                                                                            <td>${expense.bill_no || '-'}</td>
+                                                                                                                                                                                            <td>${expense.description} - ${expense.ex_cat}</td>
+                                                                                                                                                                                            <td>${expense.handle_by || '-'}</td>
+                                                                                                                                                                                            <td></td>
+                                                                                                                                                                                            <td class="text-end">${parseFloat(expense.amount).toFixed(2)}</td>
+                                                                                                                                                                                        </tr>`;
                                         }).join('')}
                                         
                                         <tr class="total-row">
@@ -1126,18 +1186,18 @@
                                 </thead>
                                 <tbody>
                                     ${reservations.map((reservation, index) => `
-                                                                                                                                                                                                                                                                                                                                                                <tr>
-                                                                                                                                                                                                                                                                                                                                                                    <td>${index + 1}</td>
-                                                                                                                                                                                                                                                                                                                                                                    <td>${reservation.guest_type} ${reservation.guest_name}</td>
-                                                                                                                                                                                                                                                                                                                                                                    <td>${reservation.contact_no ?? ''}</td>
-                                                                                                                                                                                                                                                                                                                                                                    <td>${reservation.room_type}</td>
-                                                                                                                                                                                                                                                                                                                                                                    <td>${reservation.meal_plan}</td>
-                                                                                                                                                                                                                                                                                                                                                                    <td>${reservation.guest_country}</td>
-                                                                                                                                                                                                                                                                                                                                                                    <td>${reservation.guest_from_cat ?? ''}</td>
-                                                                                                                                                                                                                                                                                                                                                                    <td>${new Date(reservation.reservation_date).toLocaleDateString()}</td>
-                                                                                                                                                                                                                                                                                                                                                                    <td>${new Date(reservation.departure_date).toLocaleDateString()}</td>
-                                                                                                                                                                                                                                                                                                                                                                </tr>
-                                                                                                                                                                                                                                                                                                                                                            `).join('')}
+                                                                                                                                                                                                                                                                                                                                                                                                                        <tr>
+                                                                                                                                                                                                                                                                                                                                                                                                                            <td>${index + 1}</td>
+                                                                                                                                                                                                                                                                                                                                                                                                                            <td>${reservation.guest_type} ${reservation.guest_name}</td>
+                                                                                                                                                                                                                                                                                                                                                                                                                            <td>${reservation.contact_no ?? ''}</td>
+                                                                                                                                                                                                                                                                                                                                                                                                                            <td>${reservation.room_type}</td>
+                                                                                                                                                                                                                                                                                                                                                                                                                            <td>${reservation.meal_plan}</td>
+                                                                                                                                                                                                                                                                                                                                                                                                                            <td>${reservation.guest_country}</td>
+                                                                                                                                                                                                                                                                                                                                                                                                                            <td>${reservation.guest_from_cat ?? ''}</td>
+                                                                                                                                                                                                                                                                                                                                                                                                                            <td>${new Date(reservation.reservation_date).toLocaleDateString()}</td>
+                                                                                                                                                                                                                                                                                                                                                                                                                            <td>${new Date(reservation.departure_date).toLocaleDateString()}</td>
+                                                                                                                                                                                                                                                                                                                                                                                                                        </tr>
+                                                                                                                                                                                                                                                                                                                                                                                                                    `).join('')}
                                 </tbody>
                             </table>
                             <p class="fw-bold mt-3 mb-5">Total Records: ${reservations.length}</p>
@@ -1256,19 +1316,19 @@
                                 </thead>
                                 <tbody>
                                     ${registrations.map((reg, index) => `
-                                                                                                                                                                                                            <tr>
-                                                                                                                                                                                                                <td>${index + 1}</td>
-                                                                                                                                                                                                                <td>${reg.guest_type} ${reg.guest_name}</td>
-                                                                                                                                                                                                                <td>${reg.contact_no ?? ''}</td>
-                                                                                                                                                                                                                <td>${reg.allocated_room_no}</td>
-                                                                                                                                                                                                                <td>${reg.room_type}</td>
-                                                                                                                                                                                                                <td>${reg.meal_plan}</td>
-                                                                                                                                                                                                                <td>${reg.guest_country}</td>
-                                                                                                                                                                                                                <td>${reg.guest_from_cat ?? ''}</td>
-                                                                                                                                                                                                                <td>${new Date(reg.reservation_date).toLocaleDateString()}</td>
-                                                                                                                                                                                                                <td>${new Date(reg.departure_date).toLocaleDateString()}</td>
-                                                                                                                                                                                                            </tr>
-                                                                                                                                                                                                        `).join('')}
+                                                                                                                                                                                                                                                                    <tr>
+                                                                                                                                                                                                                                                                        <td>${index + 1}</td>
+                                                                                                                                                                                                                                                                        <td>${reg.guest_type} ${reg.guest_name}</td>
+                                                                                                                                                                                                                                                                        <td>${reg.contact_no ?? ''}</td>
+                                                                                                                                                                                                                                                                        <td>${reg.allocated_room_no}</td>
+                                                                                                                                                                                                                                                                        <td>${reg.room_type}</td>
+                                                                                                                                                                                                                                                                        <td>${reg.meal_plan}</td>
+                                                                                                                                                                                                                                                                        <td>${reg.guest_country}</td>
+                                                                                                                                                                                                                                                                        <td>${reg.guest_from_cat ?? ''}</td>
+                                                                                                                                                                                                                                                                        <td>${new Date(reg.reservation_date).toLocaleDateString()}</td>
+                                                                                                                                                                                                                                                                        <td>${new Date(reg.departure_date).toLocaleDateString()}</td>
+                                                                                                                                                                                                                                                                    </tr>
+                                                                                                                                                                                                                                                                `).join('')}
                                 </tbody>
                             </table>
                             <p class="fw-bold mt-3 mb-5">Total Records: ${registrations.length}</p>
@@ -1402,19 +1462,19 @@
                                 </thead>
                                 <tbody>
                                     ${registrations.map((reg, index) => `
-                                                                                                                                                                                                                <tr>
-                                                                                                                                                                                                                    <td>${index + 1}</td>
-                                                                                                                                                                                                                    <td>${reg.guest_type} ${reg.guest_name}</td>
-                                                                                                                                                                                                                    <td>${reg.contact_no ?? ''}</td>
-                                                                                                                                                                                                                    <td>${reg.allocated_room_no}</td>
-                                                                                                                                                                                                                    <td>${reg.room_type}</td>
-                                                                                                                                                                                                                    <td>${reg.meal_plan}</td>
-                                                                                                                                                                                                                    <td>${reg.guest_country}</td>
-                                                                                                                                                                                                                    <td>${reg.guest_from_cat ?? ''}</td>
-                                                                                                                                                                                                                    <td>${reg.reservation_date}</td>
-                                                                                                                                                                                                                    <td>${reg.departure_date}</td>
-                                                                                                                                                                                                                </tr>
-                                                                                                                                                                                                            `).join('')}
+                                                                                                                                                                                                                                                                        <tr>
+                                                                                                                                                                                                                                                                            <td>${index + 1}</td>
+                                                                                                                                                                                                                                                                            <td>${reg.guest_type} ${reg.guest_name}</td>
+                                                                                                                                                                                                                                                                            <td>${reg.contact_no ?? ''}</td>
+                                                                                                                                                                                                                                                                            <td>${reg.allocated_room_no}</td>
+                                                                                                                                                                                                                                                                            <td>${reg.room_type}</td>
+                                                                                                                                                                                                                                                                            <td>${reg.meal_plan}</td>
+                                                                                                                                                                                                                                                                            <td>${reg.guest_country}</td>
+                                                                                                                                                                                                                                                                            <td>${reg.guest_from_cat ?? ''}</td>
+                                                                                                                                                                                                                                                                            <td>${reg.reservation_date}</td>
+                                                                                                                                                                                                                                                                            <td>${reg.departure_date}</td>
+                                                                                                                                                                                                                                                                        </tr>
+                                                                                                                                                                                                                                                                    `).join('')}
                                 </tbody>
                             </table>
                             <p class="fw-bold mt-3 mb-5">Total Records: ${registrations.length}</p>
@@ -1503,12 +1563,12 @@
                                     </thead>
                                     <tbody>
                                         ${data.summary.map((item, index) => `
-                                                                                                                                                                                <tr>
-                                                                                                                                                                                    <td>${index + 1}</td>
-                                                                                                                                                                                    <td>${item.name || 'N/A'}</td>
-                                                                                                                                                                                    <td>${item.count}</td>
-                                                                                                                                                                                </tr>
-                                                                                                                                                                            `).join('')}
+                                                                                                                                                                                                                                        <tr>
+                                                                                                                                                                                                                                            <td>${index + 1}</td>
+                                                                                                                                                                                                                                            <td>${item.name || 'N/A'}</td>
+                                                                                                                                                                                                                                            <td>${item.count}</td>
+                                                                                                                                                                                                                                        </tr>
+                                                                                                                                                                                                                                    `).join('')}
                                     </tbody>
                                 </table>
                                 <p class="fw-bold mt-3 mb-5">Total Count: <span style="font-weight: normal;">${data.totalCount}</span></p>
@@ -1612,27 +1672,27 @@
                                         ${data.incomes.map(income => {
                                             totalIncome += parseFloat(income.amount);
                                             return `
-                                                            <tr>
-                                                                <td>${income.bill_no || '-'}</td>
-                                                                <td>${income.date ? new Date(income.date).toISOString().split('T')[0] : '-'}</td>
-                                                                <td>${income.description || '-'}</td>
-                                                                <td>${income.handle_by || '-'}</td>
-                                                                <td class="text-end">${parseFloat(income.amount).toFixed(2)}</td>
-                                                                <td></td>
-                                                            </tr>`;
+                                                                                                                    <tr>
+                                                                                                                        <td>${income.bill_no || '-'}</td>
+                                                                                                                        <td>${income.date ? new Date(income.date).toISOString().split('T')[0] : '-'}</td>
+                                                                                                                        <td>${income.description || '-'}</td>
+                                                                                                                        <td>${income.handle_by || '-'}</td>
+                                                                                                                        <td class="text-end">${parseFloat(income.amount).toFixed(2)}</td>
+                                                                                                                        <td></td>
+                                                                                                                    </tr>`;
                                         }).join('')}
                                         
                                         ${data.expenses.map(expense => {
                                             totalExpense += parseFloat(expense.amount);
                                             return `
-                                                            <tr>
-                                                                <td>${expense.bill_no || '-'}</td>
-                                                                <td>${expense.date ? new Date(expense.date).toISOString().split('T')[0] : '-'}</td>
-                                                                <td>${expense.description} ${expense.ex_cat ? `- ${expense.ex_cat}` : ''}</td>
-                                                                <td>${expense.handle_by || '-'}</td>
-                                                                <td></td>
-                                                                <td class="text-end">${parseFloat(expense.amount).toFixed(2)}</td>
-                                                            </tr>`;
+                                                                                                                    <tr>
+                                                                                                                        <td>${expense.bill_no || '-'}</td>
+                                                                                                                        <td>${expense.date ? new Date(expense.date).toISOString().split('T')[0] : '-'}</td>
+                                                                                                                        <td>${expense.description} ${expense.ex_cat ? `- ${expense.ex_cat}` : ''}</td>
+                                                                                                                        <td>${expense.handle_by || '-'}</td>
+                                                                                                                        <td></td>
+                                                                                                                        <td class="text-end">${parseFloat(expense.amount).toFixed(2)}</td>
+                                                                                                                    </tr>`;
                                         }).join('')}
                                         
                                         <tr class="total-row">

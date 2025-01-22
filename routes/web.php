@@ -32,6 +32,7 @@ Route::middleware(['auth'])->group(function() {
         Route::post('/summary-report', [DashboardController::class, 'getSummaryReport'])->name('dashboard.summary-report');
         Route::post('/day-end-report', [DashboardController::class, 'getDayEndReport'])->name('dashboard.day-end-report');
         Route::post('/transaction-report', [DashboardController::class, 'getTransactionReport'])->name('dashboard.transaction-report');
+        Route::post('/check-available-rooms', [DashboardController::class, 'checkAvailableRooms'])->name('dashboard.check-available-rooms');
     });
 
     // Category Routes

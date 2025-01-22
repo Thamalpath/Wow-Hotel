@@ -176,8 +176,6 @@ class DashboardController extends Controller
         ]);
     }
 
-    
-
     public function getRegistrationHistoryReport(Request $request)
     {
         $query = DB::table('registration_history');
@@ -460,6 +458,30 @@ class DashboardController extends Controller
         return view('print.blank-registration', [
             'logo' => asset('assets/images/logo.png'),
             'telephone' => '0777 305 613 / 057 222 0375'
+        ]);
+    }
+
+    public function checkAvailableRooms(Request $request)
+    {
+        $startDate = $request->start_date;
+        $endDate = $request->end_date;
+
+        // Get all rooms that are not booked for the selected date range
+        $availableRooms = Room::whereDoesntHave('registration', function($query) use ($startDate, $endDate) {
+            $query->where(function($q) use ($startDate, $endDate) {
+                // Check if any existing booking overlaps with selected date range
+                $q->where(function($inner) use ($startDate, $endDate) {
+                    $inner->whereDate('reservation_date', '<=', $endDate)
+                        ->whereDate('departure_date', '>=', $startDate);
+                });
+            });
+        })
+        ->where('status', 'Available')
+        ->get();
+
+        return response()->json([
+            'success' => true,
+            'availableRooms' => $availableRooms
         ]);
     }
 }
