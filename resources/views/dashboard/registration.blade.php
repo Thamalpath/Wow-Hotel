@@ -613,7 +613,7 @@
             $('#registration-form')[0].reset();
             $('input[name="_method"]').remove();
 
-            $.get(`/registration/${registrationId}`, function(data) {
+            $.get(`{{ url('/registration') }}/${registrationId}`, function(data) {
                 // Populate form fields
                 $('#registration_id').val(data.id);
                 $('#reservation_code').val(data.reservation_code);
@@ -657,9 +657,9 @@
                     $('#allocated_room_no').val(data.allocated_room_no);
                 }
 
-                // Update form for PUT request
+                // Update form action for PUT request
                 const form = $('#registration-form');
-                form.attr('action', `/registration/${data.id}/update`);
+                form.attr('action', '{{ url('/') }}/registration/' + data.id + '/update');
                 form.append('<input type="hidden" name="_method" value="PUT">');
 
                 // Show update button and hide submit button
@@ -801,7 +801,7 @@
                     document.getElementById('yesButton').addEventListener('click', function() {
                         const form = document.createElement('form');
                         form.method = 'POST';
-                        form.action = `/registration/${deleteId}`;
+                        form.action = '{{ url('/') }}/registration/' + deleteId;
 
                         const methodInput = document.createElement('input');
                         methodInput.type = 'hidden';

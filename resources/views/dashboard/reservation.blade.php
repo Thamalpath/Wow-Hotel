@@ -412,7 +412,8 @@
                 $('#update').show();
 
                 // Update form action for update
-                $('#reservation-form').attr('action', `/reservations/${reservation.id}`);
+                $('#reservation-form').attr('action', '{{ route('reservations.update', '') }}/' +
+                    reservation.id);
                 $('#reservation-form').append('<input type="hidden" name="_method" value="PUT">');
             });
 
@@ -454,7 +455,7 @@
                         // Create and submit form for deletion
                         const form = document.createElement('form');
                         form.method = 'POST';
-                        form.action = `/reservations/${deleteId}`;
+                        form.action = '{{ url('/') }}/reservations/' + deleteId;
 
                         const methodInput = document.createElement('input');
                         methodInput.type = 'hidden';
