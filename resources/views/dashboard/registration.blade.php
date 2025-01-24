@@ -609,62 +609,71 @@
         $('.registration-row').click(function() {
             const registrationId = $(this).data('registration-id');
 
-            // Reset form and remove any existing method field
-            $('#registration-form')[0].reset();
-            $('input[name="_method"]').remove();
+            // Use route() helper to generate full URL
+            const url = "{{ route('registration.get', ':id') }}".replace(':id', registrationId);
 
-            $.get(`/registration/${registrationId}`, function(data) {
-                // Populate form fields
-                $('#registration_id').val(data.id);
-                $('#reservation_code').val(data.reservation_code);
-                $('#reservation_date').val(data.reservation_date);
-                $('#departure_date').val(data.departure_date);
-                $('#reservation_time').val(data.reservation_time);
-                $('#departure_time').val(data.departure_time);
-                $('#no_of_day').val(data.no_of_day);
-                $('#total_pax_count').val(data.total_pax_count);
-                $('#guest_type').val(data.guest_type);
-                $('#guest_name').val(data.guest_name);
-                $('#contact_no').val(data.contact_no);
-                $('#email').val(data.email);
-                $('#id_pass').val(data.id_pass);
-                $('#expire_date').val(data.expire_date);
-                $('#address').val(data.address);
-                $('#guest_country').val(data.guest_country);
-                $('#guest_from_cat').val(data.guest_from_cat);
-                $('#room_type').val(data.room_type);
-                $('#no_of_pax').val(data.no_of_pax);
-                $('#meal_plan').val(data.meal_plan);
-                $('#profession').val(data.profession);
-                $('#rooms_need').val(data.rooms_need);
-                $('#currency').val(data.currency);
-                $('#us').val(data.us);
-                $('#rs').val(data.rs);
-                $('#adults').val(data.adults);
-                $('#children').val(data.children);
-                $('#infants').val(data.infants);
-                $('#description').val(data.description);
+            // Add error handling and logging
+            $.ajax({
+                url: url,
+                method: 'GET',
+                success: function(data) {
+                    // Populate form fields
+                    $('#registration_id').val(data.id);
+                    $('#reservation_code').val(data.reservation_code);
+                    $('#reservation_date').val(data.reservation_date);
+                    $('#departure_date').val(data.departure_date);
+                    $('#reservation_time').val(data.reservation_time);
+                    $('#departure_time').val(data.departure_time);
+                    $('#no_of_day').val(data.no_of_day);
+                    $('#total_pax_count').val(data.total_pax_count);
+                    $('#guest_type').val(data.guest_type);
+                    $('#guest_name').val(data.guest_name);
+                    $('#contact_no').val(data.contact_no);
+                    $('#email').val(data.email);
+                    $('#id_pass').val(data.id_pass);
+                    $('#expire_date').val(data.expire_date);
+                    $('#address').val(data.address);
+                    $('#guest_country').val(data.guest_country);
+                    $('#guest_from_cat').val(data.guest_from_cat);
+                    $('#room_type').val(data.room_type);
+                    $('#no_of_pax').val(data.no_of_pax);
+                    $('#meal_plan').val(data.meal_plan);
+                    $('#profession').val(data.profession);
+                    $('#rooms_need').val(data.rooms_need);
+                    $('#currency').val(data.currency);
+                    $('#us').val(data.us);
+                    $('#rs').val(data.rs);
+                    $('#adults').val(data.adults);
+                    $('#children').val(data.children);
+                    $('#infants').val(data.infants);
+                    $('#description').val(data.description);
 
-                // Handle room selection
-                if (data.allocated_room_no) {
-                    // If the allocated room isn't in the dropdown, add it
-                    if (!$('#allocated_room_no option[value="' + data.allocated_room_no + '"]').length) {
-                        $('#allocated_room_no').append(new Option(
-                            data.allocated_room_no + ' || ' + data.room_type,
-                            data.allocated_room_no
-                        ));
+                    // Handle room selection
+                    if (data.allocated_room_no) {
+                        // If the allocated room isn't in the dropdown, add it
+                        if (!$('#allocated_room_no option[value="' + data.allocated_room_no + '"]')
+                            .length) {
+                            $('#allocated_room_no').append(new Option(
+                                data.allocated_room_no + ' || ' + data.room_type,
+                                data.allocated_room_no
+                            ));
+                        }
+                        $('#allocated_room_no').val(data.allocated_room_no);
                     }
-                    $('#allocated_room_no').val(data.allocated_room_no);
+
+                    // Update form for PUT request
+                    const form = $('#registration-form');
+                    form.attr('action', `/registration/${data.id}/update`);
+                    form.append('<input type="hidden" name="_method" value="PUT">');
+
+                    // Show update button and hide submit button
+                    $('#submit').hide();
+                    $('#update').show();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching registration:', error);
+                    toastr.error('Failed to fetch registration data');
                 }
-
-                // Update form for PUT request
-                const form = $('#registration-form');
-                form.attr('action', `/registration/${data.id}/update`);
-                form.append('<input type="hidden" name="_method" value="PUT">');
-
-                // Show update button and hide submit button
-                $('#submit').hide();
-                $('#update').show();
             });
         });
 
